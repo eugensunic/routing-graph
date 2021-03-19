@@ -1,0 +1,296 @@
+﻿body {
+	font-family: sans-serif;
+	font-weight: normal;
+	color: #999;
+	background-color: darkolivegreen;
+ 
+   
+
+   margin: 0 !important;
+   padding: 0 !important;
+   margin-top:20px;
+   
+}
+/*CHECKBOX STYLE---------------------------------------------------------------------------*/
+p.inside {
+    margin-left:-12%;
+    display:inline;
+}
+
+div.ca {     /* TO MALOSREDITI POSLIJE APLICAIRATI SAMO NA OVD*/
+    text-align:center;
+}
+label {
+  width: 100% !important;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4
+}
+
+/* hide input */
+input.radio:empty {
+	margin-left: -999px;
+}
+
+/* style label */
+input.radio:empty ~ label {
+	position: relative;
+	line-height: 2em;
+	text-indent: 3.25em;
+	margin-top: 7px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+input.radio:empty ~ label:before {
+	position: absolute;
+	display: block;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	content: '';
+	width: 2.5em;
+	background: #D1D3D4;
+	border-radius: 3px 0 0 3px;
+}
+
+/* toggle hover */
+input.radio:hover:not(:checked) ~ label:before {
+	content:'\2714';
+	text-indent: .9em;
+	color: #C2C2C2;
+}
+
+input.radio:hover:not(:checked) ~ label {
+	color: #888;
+}
+
+/* toggle on */
+input.radio:checked ~ label:before {
+	content:'\2714';
+	text-indent: .9em;
+	color: #9CE2AE;
+	background-color: #4DCB6D;
+}
+
+input.radio:checked ~ label {
+	color: #777;
+}
+
+/* radio focus */
+input.radio:focus ~ label:before {
+	box-shadow: 0 0 0 3px #999;
+}
+/*CHECKBOX STYLE---------------------------------------------------------------------------*/
+/*bootstrap dropdown box-------------------------------------------------------------------*/
+li {
+    text-align:center;
+    margin-top:14px
+}
+#dropp {
+    width:100%;
+}
+.dropdown-menu {
+  width: 100%;
+  height:207px; 
+}
+.dp 
+{  
+    margin-top:15px;
+}
+.dropdown
+{ 
+    margin-bottom:20px;
+    text-align:center;
+
+}
+
+/*bootstrap dropdown box-------------------------------------------------------------------*/
+
+
+ /*UP-DOWN SECTION IZVOR*/
+#izvor {
+    
+    text-align:center;
+}
+#up1 {
+   
+     margin-left:10px;
+     width:40px;
+     height:45px;
+     position:absolute;
+     z-index:999;
+}
+#down1 {
+    margin-right:20px;
+    position:absolute;
+    right:0;
+    width:40px;
+    height:45px;
+     position:absolute;
+     z-index:999;
+}
+#broj1 {
+   
+    text-align:center;
+    font-weight:bold; 
+    font-size:35px
+    
+}
+ /*UP-DOWN SECTION IZVOR*/
+
+ /*UP-DOWN SECTION ODREDISTE*/
+ #odrediste {
+    
+    text-align:center;
+}
+#up2 {
+   
+     margin-left:10px;
+     width:40px;
+     height:45px;
+     position:absolute;
+     z-index:999;
+}
+#down2 {
+     margin-right:20px;
+    position:absolute;
+    right:0;
+    width:40px;
+    height:45px;
+     position:absolute;
+     z-index:999;
+    
+}
+#broj2 {
+   
+
+    text-align:center;
+    font-weight:bold; 
+    font-size:35px
+}
+/*UP-DOWN SECTION ODREDISTE*/
+
+.hrlinefirst {
+    position:relative;
+    top:0px;
+    height: 12px;
+    border: 0;
+    box-shadow: inset 0px 3px 1px 0px rgba(0, 0, 0, 0.3);
+  
+}
+.hrlinesecond {
+    position:relative;
+    top:20px;
+    height: 12px;
+    border: 0;
+    box-shadow: inset 0px 3px 1px 0px rgba(0, 0, 0, 0.3);
+    margin-bottom:30px;
+}
+/*BUTTONS*/
+button.green{
+        margin-left:11px;
+        box-shadow: 2px 2px 2px #888888;
+}
+button.blue{
+        box-shadow: 2px 2px 2px #888888;
+        margin-right:20px;
+        position:absolute;
+        right:0;
+        width:70px;
+}
+/*BUTTONS*/
+
+
+/*TABLE*/
+#here_table {
+    text-align:center;
+    width:100%;
+    position:relative;
+    margin-left:0px;
+    margin-bottom:60px;
+
+}
+#zoomin1 {
+   
+    position: absolute;
+    left: 70px;
+    top: 0px;
+    min-width: 30px;
+    width: 4.5%;
+}
+#zoomout1 {
+
+    position: absolute;
+    left: 10px;
+    top: 0px;
+    min-width: 30px;
+    width: 4.5%;
+
+}
+/*TABLE*/
+canvas {
+  
+    border:2px solid black;
+    margin-left:0px;
+    margin-top:30px;
+    min-width:360px;
+    width:100%;
+    border-radius:3px;
+    padding-left:0px;
+    height:auto;
+
+   
+}
+/*#push_bar {
+    position:absolute;
+    left:70px;
+    background-color:saddlebrown;
+    visibility:visible;
+    width:40px;
+    height:20px;
+}*/
+
+
+#broj_cvora{
+    position: relative;
+    top: -30px;
+    margin-left: 152px
+}
+#broj_puteva{
+    position: relative;
+    top: -30px;
+    margin-left: 152px
+}
+
+#broj_mogucihputeva{
+    position: relative;
+    top: -30px;
+    margin-left: 152px
+}
+#boja_cvora{
+    position: relative;
+    top: -30px;
+    margin-left: 152px
+}
+#bojac{
+    
+    position: relative;
+    top: -30px;
+    margin-left: 146px
+}
+img:hover {
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+#postavke:hover{
+     opacity: 0.2;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    cursor:pointer;
+}
+
+
+
+

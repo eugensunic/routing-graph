@@ -1,0 +1,1170 @@
+//MAIN WORKING SOURCE CODE
+
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/pravo1.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+   
+    <title>ttkp2-usmjeravanje</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8" />
+    <script>
+
+
+        var already_drawn = false;
+        var iz_izvorista = false;
+        var privremena = "";
+        var secondselected = false;
+        var firstselected = true;
+        var thirdselected = false;
+        var fourthselected = false;
+        var X = 0;
+        var Y = 0;
+        var Value = "";
+
+        var x = 10;
+        var y = 10;
+        var izvor = 0;
+        var odrediste = 0;
+
+        // Method variables
+        //--------------------------------------------------------------
+        var checkif2values = [];     //objasnjenje za svaki kasnije
+        var checkif2values2 = [];
+        var mem_tockeX = [];
+        var mem_tockeY = [];
+        var Memorize_point_X = [];
+        var Memorize_point_Y = [];
+        var global_destinationX = [];
+        var global_destinationY = [];
+        var izvorisni_clanovi = [];
+        var vrijednost_noda = [];
+        var prva_vrijednost = "";
+        var xyz = false;
+        var angling = 0;
+        //-----------------------
+        var zoom;
+
+        var cvor = 0;
+        var putevi = 0;
+        var moguci_putevi = 0;
+       
+        //--------------------------------------------------------------
+        // Method variables
+
+        var c;
+        var ctx;
+        var tablica4bez_znakova =
+[
+            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
+            ["0", "X", "2", "3", "4", "5", "5", "5", "5", "3"],
+            ["0", "1,5", "X", "5,1", "4,1", "5,1", "1,5", "5,1", "5,1", "4,1,5"],
+            ["0", "1", "4,1,5", "X", "4,1", "5,1", "5,1", "5,1", "5", "9"],
+            ["0", "1,2,3", "2,1", "3,1", "X", "3,1,2", "3,2,1", "2,1,3", "2,1,3", "3,1"],
+            ["0", "1,3", "2,1", "3,1", "2,1,3", "X", "6", "7", "8", "3"],
+            ["0", "5", "5", "5", "5", "5", "X", "5", "5", "5"],
+            ["0", "5", "5", "5", "5", "5", "5", "X", "5", "5"],
+            ["0", "5", "5", "5", "5", "5", "5", "5", "X", "5"],
+            ["0", "3", "3", "3", "3", "3", "3", "3", "3", "X"]
+            
+];
+       
+
+        var tablica1bez_znakova =
+[
+            ["0", "0", "0", "0", "0", "0", "0", "0", "0"],
+            ["0", "X", "2,3", "3,2", "3,2", "2,3", "2", "3", "2,3"],
+            ["0", "1,3", "X", "3", "6,3", "5,6", "6,5", "6,5", "5"],
+            ["0", "1", "2", "X", "4", "2", "4,2", "4", "4,2"],
+            ["0", "3", "3,6", "3", "X", "6,3,7", "6", "7,6", "8,7"],
+            ["0", "6,2", "2,6", "2,6", "8,6", "X", "6", "6,8", "8"],
+            ["0", "2,4", "2", "2,4", "4", "5", "X", "7", "7,5"],
+            ["0", "4,6,8", "6", "4,6", "4,6", "6,8", "6,8", "X", "8"],
+            ["0", "5", "5,4", "4,7", "4", "5", "5", "7", "X"]
+        ];
+
+        var tablica2bez_znakova =
+
+        [
+           ["0", "0", "0", "0", "0", "0"],
+           ["0", "X", "2,3", "3,2", "3,2", "3,2"],
+           ["0", "1", "X", "3", "4,5", "5,4"],
+           ["0", "1,2", "2", "X", "4,2", "5,4,2"],
+           ["0", "3,2", "2,3", "3,2", "X", "5"],
+           ["0", "2,3", "2,4", "3,2,4", "4", "X"],
+
+        ];
+        var tablica3bez_znakova =
+
+        [
+           ["0", "0", "0", "0", "0", "0"],
+           ["0", "X", "3,5", "3", "2", "4,3"],
+           ["0", "1,3,4,5", "X", "3,4,5", "3", "5,3"],
+           ["0", "1,4", "2,4,5", "X", "4", "5"],
+           ["0", "5", "2,5", "3,1", "X", "5,2"],
+           ["0", "1", "2", "3", "4,3,1", "X"],
+
+        ];
+ 
+        var tablica1sa_znakovima =
+[
+            ["0", "0", "0", "0", "0", "0", "0", "0", "0"],
+            ["0", "X", "2,3", "3,2", "3,2", "2,3", "2", "3", "2,3"],
+            ["0", "1,3", "X", "3", "6,3", "5,6", "6,5", "6,5", "5"],
+            ["0", "1", "2", "X", "4", "2", "4,2", "4", "4,2"],
+            ["0", "3", "3,6", "3", "X", "6,3,7", "6", "7,6", "8,7"],
+            ["0", "6,2*", "2,6", "2,6", "8,6", "X", "6", "6,8", "8"],
+            ["0", "2*,4", "2", "2,4", "4", "5", "X", "7", "7,5"],
+            ["0", "4,6*,8", "6", "4,6", "4,6", "6,8", "6,8", "X", "8"],
+            ["0", "5", "5,4", "4,7", "4", "5", "5", "7", "X"]
+        ];
+        var tablica2sa_znakovima =
+
+        [
+           ["0", "0", "0", "0", "0", "0"],
+           ["0", "X", "2,3", "3,2", "3,2", "3*,2"],
+           ["0", "1", "X", "3", "4,5", "5,4"],
+           ["0", "1,2", "2", "X", "4,2", "5,4,2"],
+           ["0", "3,2", "2,3", "3,2", "X", "5"],
+           ["0", "2,3", "2,4", "3,2,4", "4", "X"],
+
+        ];
+        var tablica4sa_znakovima =
+[
+         ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
+         ["0", "X", "2", "3", "4", "5", "5", "5", "5", "3"],
+         ["0", "1,5", "X", "5*,1", "4,1", "5,1", "1,5", "5,1", "5,1", "4*,1,5"],
+         ["0", "1", "4*,1,5", "X", "4,1", "5,1", "5,1", "5,1", "5", "9"],
+         ["0", "1,2,3", "2,1", "3,1", "X", "3*,1,2*", "3,2*,1", "2*,1,3", "2*,1,3", "3,1"],
+         ["0", "1,3", "2,1", "3,1", "2,1,3*", "X", "6", "7", "8", "3"],
+         ["0", "5*", "5*", "5*", "5*", "5", "X", "5", "5", "5"],
+         ["0", "5*", "5*", "5*", "5*", "5", "5", "X", "5", "5"],
+         ["0", "5*", "5*", "5*", "5*", "5", "5", "5", "X", "5"],
+         ["0", "3", "3*", "3", "3*", "3*", "3*", "3*", "3", "X"]
+       
+];
+        function Node(x, y, value) {
+            X = x;
+            Y = y;
+            Value = value;
+            this.DrawCircleNumber = dar;
+
+
+        }
+        function dar() {
+            ctx.beginPath();
+            ctx.arc(X + 110, Y + 20, 30, 0, 2 * Math.PI);
+            ctx.font = "30px arial";
+            ctx.fillText(Value, X + 102, Y + 30);
+            ctx.stroke();
+
+
+
+        }
+
+        function ConnectionLine(currentX, currentY, nextX, nextY) {
+
+            ctx.moveTo(currentX + 10, currentY + 10);
+            ctx.lineTo(nextX + 10, nextY + 10);
+            ctx.stroke();
+        }
+
+
+        var next_node;
+
+        function Sekvencialna_Izvor(polje) {
+
+            next_node = new Node(Memorize_point_X[Memorize_point_X.length - 1], Memorize_point_Y[Memorize_point_Y.length - 1], prva_vrijednost);
+            next_node.DrawCircleNumber();
+            cvor++;
+            ctx.moveTo(Memorize_point_X[Memorize_point_X.length - 1] + 139, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+            ctx.lineTo(Memorize_point_X[Memorize_point_X.length - 1] + 175, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+            ctx.stroke();
+            putevi++;
+            Memorize_point_X.push(X);
+            Memorize_point_Y.push(Y);
+            checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+            //checkif2values2.push(filldatagrid2[parseInt(prva_vrijednost),odrediste]);
+           
+            if (checkif2values[checkif2values.length - 1].length > 1) {
+                var temp = polje[izvor][odrediste];
+                for (j = 1; j < temp.length; j++) {
+                    if (temp[j] != ',') {
+                        izvorisni_clanovi.push(temp[j].toString());
+                    }
+                }
+            }
+            else if (checkif2values[checkif2values.length - 1] == odrediste.toString()) { return; }
+            else if (checkif2values[checkif2values.length - 1].length > 1) {
+                var temporary = Memorize_point_X.pop() - 60;
+                Memorize_point_X.pop();
+                Memorize_point_X.push(temporary);
+                return;
+            }
+            else {
+                Memorize_point_X.pop();
+                Memorize_point_X.push(X += 94);
+                prva_vrijednost = polje[parseInt(prva_vrijednost)][odrediste].substring(0);
+
+                console.log(prva_vrijednost);
+                Sekvencialna_Izvor(polje);
+            }
+
+        }
+        function Sekvencialna(polje) {
+        
+            do {
+                if (checkif2values[checkif2values.length - 1].length > 1 && checkif2values[checkif2values.length - 1] != polje[izvor][odrediste]) {
+                    if (Grananje(polje[parseInt(prva_vrijednost)][odrediste]) > 1) {
+                       // if (checkif2values[checkif2values.length - 1].length==1)
+                        vrijednost_noda.push(checkif2values[checkif2values.length - 1].substring(4, 5));
+                        console.log(vrijednost_noda[vrijednost_noda.length-1]);
+
+                        mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                        mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                    }
+                    xyz = true;
+                    vrijednost_noda.push(checkif2values[checkif2values.length - 1].substring(2, 3));
+                    console.log(vrijednost_noda[vrijednost_noda.length - 1]);
+
+                    mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                    mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                }
+                prva_vrijednost = polje[parseInt(prva_vrijednost)][odrediste].substring(0, 1);
+                if (prva_vrijednost == "X") break;
+                x = Memorize_point_X[Memorize_point_X.length - 1];
+                y = Memorize_point_Y[Memorize_point_Y.length - 1];
+
+
+                next_node = new Node(x + 100, y, prva_vrijednost);
+                next_node.DrawCircleNumber();
+                cvor++;
+                ctx.moveTo(Memorize_point_X[Memorize_point_X.length - 1] + 139, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+                ctx.lineTo(Memorize_point_X[Memorize_point_X.length - 1] + 180, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+                ctx.stroke();
+                putevi++;
+                Memorize_point_X.push(X);
+                Memorize_point_Y.push(Y);
+                if (prva_vrijednost == odrediste.toString()) {
+                    global_destinationX.push(X);
+                    global_destinationY.push(Y);
+                }
+                checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                //checkif2values2.push(filldatagrid2[parseInt(prva_vrijednost),odrediste]);
+               
+            } while (prva_vrijednost != odrediste.toString());
+
+            //------------------------------------------------------------------------------- Main metoda
+            if (vrijednost_noda.length == 0 && xyz == true) { xyz = false; return; }
+
+            for (var k = vrijednost_noda.length - 1; k >= 0; k--) {
+                if (mem_tockeX.length != 0 && mem_tockeY.length != 0) {
+                    if (vrijednost_noda.length != 0) {
+                        next_node = new Node(mem_tockeX[mem_tockeX.length - 1] + 80, global_destinationY[global_destinationY.length - 1] + 90, vrijednost_noda[k]);
+                        next_node.DrawCircleNumber();
+                        cvor++;
+
+                        ctx.moveTo(mem_tockeX[mem_tockeX.length - 1] + 120, mem_tockeY[mem_tockeY.length - 1] + 45);
+                        ctx.lineTo(X + 104, Y - 7);
+                        ctx.stroke();
+                        putevi++;
+                        mem_tockeX.pop();
+                        mem_tockeY.pop();
+                        Memorize_point_X.push(X);
+                        Memorize_point_Y.push(Y);
+                        prva_vrijednost = vrijednost_noda[k];
+                        vrijednost_noda.pop();
+                        checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                        Sekvencialna(polje);
+
+
+
+                    }
+                }
+            }
+            if (izvorisni_clanovi.length != 0) {
+                next_node = new Node(Memorize_point_X[0] + 55 - angling, Memorize_point_Y[0] + global_destinationY[global_destinationY.length - 1] + 70, izvorisni_clanovi[0]);
+                angling += 20;
+                next_node.DrawCircleNumber();
+                cvor++;
+                //Conekcija linija Node.ConnectionLine(g, new Point(Memorize_point_X1.First() + 22, Memorize_point_Y1.First() + 28), new Point(next_node.X + 8, next_node.Y + 2));
+                ctx.moveTo(Memorize_point_X[0] + 110, Memorize_point_Y[0] + 50);
+                ctx.lineTo(X + 100, Y - 6);
+                ctx.stroke();
+                putevi++;
+                Memorize_point_X.push(X);
+                Memorize_point_Y.push(Y);
+                prva_vrijednost = izvorisni_clanovi[0];
+                izvorisni_clanovi.shift();
+                mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                Sekvencialna(polje);
+            }
+
+        }
+        function SekvencialnaIzvorUzPrenosenjePrva(polje, poljesazvjezdom) {
+            next_node = new Node(Memorize_point_X[Memorize_point_X.length - 1], Memorize_point_Y[Memorize_point_Y.length - 1], prva_vrijednost);
+            next_node.DrawCircleNumber();
+            cvor++
+            ctx.moveTo(Memorize_point_X[Memorize_point_X.length - 1] + 139, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+            ctx.lineTo(Memorize_point_X[Memorize_point_X.length - 1] + 175, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+            ctx.stroke();
+            putevi++;
+            Memorize_point_X.push(X);
+            Memorize_point_Y.push(Y);
+            checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+            checkif2values2.push(poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]);
+            if ((checkif2values2[checkif2values2.length - 1]).indexOf("*") > -1) {
+                var index = parseInt(((poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]).indexOf("*") - 1));
+                privremena = (poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]).substring(index, index + 1);
+            }
+            if (checkif2values[checkif2values.length - 1].length > 1) {
+                var temp = polje[izvor][odrediste];
+                for (j = 1; j < temp.length; j++) {
+                    if (temp[j] != ',') {
+                        izvorisni_clanovi.push(temp[j].toString());
+                    }
+                }
+            }
+            else if (checkif2values[checkif2values.length - 1] == odrediste.toString()) { return; }
+            else if (checkif2values[checkif2values.length - 1].length > 1) {
+                var temporary = Memorize_point_X.pop() - 60;
+                Memorize_point_X.pop();
+                Memorize_point_X.push(temporary);
+                return;
+            }
+            else {
+                Memorize_point_X.pop();
+                Memorize_point_X.push(X += 94);
+                prva_vrijednost = polje[parseInt(prva_vrijednost)][odrediste].substring(0);
+                SekvencialnaIzvorUzPrenosenjePrva(polje, poljesazvjezdom);
+            }
+
+        }
+        function SekvencialnaIzvorUzPrenosenjeDruga(polje, poljesazvjezdom) {
+            do {
+                if (checkif2values[checkif2values.length - 1].length > 1 && checkif2values[checkif2values.length - 1] != polje[izvor][odrediste]) {
+
+                    if ((checkif2values2[checkif2values2.length - 1]).indexOf("*") > -1) {
+                        xyz = true;
+                        var index = (poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]).indexOf("*") - 1;
+                        privremena = (poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]).substring(index, 1);
+                    }
+                }
+                prva_vrijednost = polje[parseInt(prva_vrijednost)][odrediste].substring(0, 1);
+                if (prva_vrijednost == "X") break;
+                x = Memorize_point_X[Memorize_point_X.length - 1];
+                y = Memorize_point_Y[Memorize_point_Y.length - 1];
+
+
+                next_node = new Node(x + 100, y, prva_vrijednost);
+                next_node.DrawCircleNumber();
+                cvor++;
+
+                ctx.moveTo(Memorize_point_X[Memorize_point_X.length - 1] + 139, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+                ctx.lineTo(Memorize_point_X[Memorize_point_X.length - 1] + 180, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+                ctx.stroke();
+                putevi++;
+                Memorize_point_X.push(X);
+                Memorize_point_Y.push(Y);
+                if (prva_vrijednost == privremena) {
+                    if (Grananje(polje[parseInt(prva_vrijednost)][odrediste]) > 1) {
+                        vrijednost_noda.push(polje[parseInt(privremena)][odrediste].substring(4, 5));
+                        mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                        mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                    }
+                    vrijednost_noda.push(polje[parseInt(privremena)][odrediste].substring(2, 3));
+                    mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                    mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                }
+                if (prva_vrijednost == odrediste.toString()) {
+                    global_destinationX.push(X);
+                    global_destinationY.push(Y);
+                }
+                checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                checkif2values2.push(poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]);
+            } while (prva_vrijednost != odrediste.toString());
+
+            //------------------------------------------------------------------------------- Main metoda
+            if (vrijednost_noda.length == 0 && xyz == true) { xyz = false; return; }
+
+            for (var k = vrijednost_noda.length - 1; k >= 0; k--) {
+                if (mem_tockeX.length != 0 && mem_tockeY.length != 0) {
+                    if (vrijednost_noda.length != 0) {
+                        next_node = new Node(mem_tockeX[mem_tockeX.length - 1] + 80, global_destinationY[global_destinationY.length - 1] + 90, vrijednost_noda[k]);
+                        next_node.DrawCircleNumber();
+                        cvor++;
+
+                        ctx.moveTo(mem_tockeX[mem_tockeX.length - 1] + 120, mem_tockeY[mem_tockeY.length - 1] + 45);
+                        ctx.lineTo(X + 104, Y - 7);
+                        ctx.stroke();
+                        putevi++;
+                        mem_tockeX.pop();
+                        mem_tockeY.pop();
+                        Memorize_point_X.push(X);
+                        Memorize_point_Y.push(Y);
+                        prva_vrijednost = vrijednost_noda[k];
+                        vrijednost_noda.pop();
+                        checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                        checkif2values2.push(poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]);
+                        SekvencialnaIzvorUzPrenosenjeDruga(polje, poljesazvjezdom);
+
+
+
+                    }
+                }
+            }
+            if (izvorisni_clanovi.length != 0) {
+                next_node = new Node(Memorize_point_X[0] + 55 - angling, Memorize_point_Y[0] + global_destinationY[global_destinationY.length - 1] + 70, izvorisni_clanovi[0]);
+                angling += 20;
+                next_node.DrawCircleNumber();
+                cvor++;
+                //Conekcija linija Node.ConnectionLine(g, new Point(Memorize_point_X1.First() + 22, Memorize_point_Y1.First() + 28), new Point(next_node.X + 8, next_node.Y + 2));
+                ctx.moveTo(Memorize_point_X[0] + 110, Memorize_point_Y[0] + 50);
+                ctx.lineTo(X + 100, Y - 6);
+                ctx.stroke();
+                putevi++;
+                Memorize_point_X.push(X);
+                Memorize_point_Y.push(Y);
+                prva_vrijednost = izvorisni_clanovi[0];
+                if (prva_vrijednost == privremena) {
+                    vrijednost_noda.push(polje[parseInt(privremena)][odrediste].substring(2, 3)); // inace briem da to trea mjenjat
+                    mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                    mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                }
+                izvorisni_clanovi.shift();
+                mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                checkif2values2.push(poljesazvjezdom[parseInt(prva_vrijednost)][odrediste]);
+                SekvencialnaIzvorUzPrenosenjeDruga(polje, poljesazvjezdom);
+            }
+
+        }
+        function SekvencialnaIzvorIzvorPrvi(polje, poljesazvjezdom) {
+            next_node = new Node(Memorize_point_X[Memorize_point_X.length - 1], Memorize_point_Y[Memorize_point_Y.length - 1], prva_vrijednost);
+            next_node.DrawCircleNumber();
+            cvor++;
+            ctx.moveTo(Memorize_point_X[Memorize_point_X.length - 1] + 139, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+            ctx.lineTo(Memorize_point_X[Memorize_point_X.length - 1] + 175, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+            ctx.stroke();
+            putevi++;
+            Memorize_point_X.push(X);
+            Memorize_point_Y.push(Y);
+            checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+            //checkif2values2.push(filldatagrid2[parseInt(prva_vrijednost),odrediste]);
+            if (checkif2values[checkif2values.length - 1].length > 1) {
+                iz_izvorista = true;
+                var temp = polje[izvor][odrediste];
+                for (j = 1; j < temp.length; j++) {
+                    if (temp[j] != ',') {
+                        izvorisni_clanovi.push(temp[j].toString());
+                    }
+                }
+            }
+            else if (checkif2values[checkif2values.length - 1] == odrediste.toString()) { return; }
+            else if (checkif2values[checkif2values.length - 1].length > 1) {
+                iz_izvorista = true;
+                var temporary = Memorize_point_X.pop() - 60;
+                Memorize_point_X.pop();
+                Memorize_point_X.push(temporary);
+                return;
+            }
+            else {
+                iz_izvorista = true;
+                Memorize_point_X.pop();
+                Memorize_point_X.push(X += 94);
+                prva_vrijednost = polje[parseInt(prva_vrijednost)][odrediste].substring(0);
+                SekvencialnaIzvorIzvorPrvi(polje, poljesazvjezdom);
+            }
+        }
+        function SekvencialnaIzvorIzvorDrugi(polje, poljesazvjezdom) {
+            do {
+                if (checkif2values[checkif2values.length - 1].length > 1 && checkif2values[checkif2values.length - 1] != polje[izvor][odrediste]) {
+                    xyz = true;
+                    vrijednost_noda.push(checkif2values[checkif2values.length - 1].substring(2, 3));
+                    mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                    mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                }
+                prva_vrijednost = polje[parseInt(prva_vrijednost)][odrediste].substring(0, 1);
+                if (prva_vrijednost == "X") break;
+                x = Memorize_point_X[Memorize_point_X.length - 1];
+                y = Memorize_point_Y[Memorize_point_Y.length - 1];
+
+
+                next_node = new Node(x + 100, y, prva_vrijednost);
+                next_node.DrawCircleNumber();
+                cvor++;
+
+                ctx.moveTo(Memorize_point_X[Memorize_point_X.length - 1] + 139, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+                ctx.lineTo(Memorize_point_X[Memorize_point_X.length - 1] + 180, Memorize_point_Y[Memorize_point_Y.length - 1] + 13);
+                ctx.stroke();
+                putevi++;
+
+                Memorize_point_X.push(X);
+                Memorize_point_Y.push(Y);
+                if (prva_vrijednost == odrediste.toString()) {
+                    global_destinationX.push(X);
+                    global_destinationY.push(Y);
+                }
+                checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                //checkif2values2.push(filldatagrid2[parseInt(prva_vrijednost),odrediste]);
+            } while (prva_vrijednost != odrediste.toString());
+
+            //------------------------------------------------------------------------------- Main metoda
+            if (vrijednost_noda.length == 0 && xyz == true) { xyz = false; return; }
+
+            for (var k = vrijednost_noda.length - 1; k >= 0; k--) {
+                if (iz_izvorista == false) {
+                    if (mem_tockeX.length != 0 && mem_tockeY.length != 0) {
+                        if (vrijednost_noda.length != 0) {
+                            next_node = new Node(mem_tockeX[mem_tockeX.length - 1] + 80, global_destinationY[global_destinationY.length - 1] + 90, vrijednost_noda[k]);
+                            next_node.DrawCircleNumber();
+                            cvor++;
+
+                            ctx.moveTo(mem_tockeX[mem_tockeX.length - 1] + 120, mem_tockeY[mem_tockeY.length - 1] + 45);
+                            ctx.lineTo(X + 104, Y - 7);
+                            ctx.stroke();
+                            putevi++;
+                            mem_tockeX.pop();
+                            mem_tockeY.pop();
+                            Memorize_point_X.push(X);
+                            Memorize_point_Y.push(Y);
+                            prva_vrijednost = vrijednost_noda[k];
+                            vrijednost_noda.pop();
+                            checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                            SekvencialnaIzvorIzvorDrugi(polje, poljesazvjezdom);
+
+
+
+                        }
+                    }
+                }
+            }
+            if (izvorisni_clanovi.length != 0) {
+                next_node = new Node(Memorize_point_X[0] + 55 - angling, Memorize_point_Y[0] + global_destinationY[global_destinationY.length - 1] + 70, izvorisni_clanovi[0]);
+                angling += 20;
+                next_node.DrawCircleNumber();
+                cvor++;
+                //Conekcija linija Node.ConnectionLine(g, new Point(Memorize_point_X1.First() + 22, Memorize_point_Y1.First() + 28), new Point(next_node.X + 8, next_node.Y + 2));
+                ctx.moveTo(Memorize_point_X[0] + 110, Memorize_point_Y[0] + 50);
+                ctx.lineTo(X + 100, Y - 6);
+                ctx.stroke();
+                putevi++;
+                Memorize_point_X.push(X);
+                Memorize_point_Y.push(Y);
+                prva_vrijednost = izvorisni_clanovi[0];
+                izvorisni_clanovi.shift();
+                mem_tockeX.push(Memorize_point_X[Memorize_point_X.length - 1]);
+                mem_tockeY.push(Memorize_point_Y[Memorize_point_Y.length - 1]);
+                checkif2values.push(polje[parseInt(prva_vrijednost)][odrediste]);
+                SekvencialnaIzvorIzvorDrugi(polje, poljesazvjezdom);
+            }
+        }
+        function Grananje(grana) {
+            var counterneki = 0;
+            for (var i = 0; i < grana.length; i++) {
+                if (grana[i] == ',') {
+                    counterneki++;
+                }
+
+            }
+            return counterneki;
+        }
+
+        function povecaj(x) {
+            if (firstselected) { x = 8; }
+            else if (secondselected || thirdselected) { x = 5; }
+            else { x = 9 }
+            if (varijalba >= 0 && varijalba < x) {
+                varijalba = varijalba + 1;
+                document.getElementById('broj1').innerHTML = varijalba.toString();
+                izvor = varijalba;
+                
+            }
+        }
+        function smanji(x) {
+            if (firstselected) { x = 8; }
+            else if (secondselected || thirdselected) { x = 5; }
+            else { x=9}
+            if (varijalba > 0 && varijalba <= x) {
+                varijalba = varijalba - 1;
+                document.getElementById('broj1').innerHTML = varijalba.toString();
+                izvor = varijalba;
+                
+            }
+        }
+
+
+        function povecaj2(x) {
+          
+            if (firstselected) { x = 8; }
+            else if (secondselected || thirdselected) { x = 5; }
+            else { x = 9 }
+            if (varijabla2 >= 0 && varijabla2 < x) {
+                varijabla2 = varijabla2 + 1;
+                document.getElementById('broj2').innerHTML = varijabla2.toString();
+                odrediste = varijabla2;
+              
+            }
+        }
+
+        function smanji2(x) {
+            if (firstselected) { x = 8; }
+            else if (secondselected || thirdselected) { x = 5; }
+            else { x = 9 }
+            if (varijabla2 > 0 && varijabla2 <= x) {
+                varijabla2 = varijabla2 - 1;
+                document.getElementById('broj2').innerHTML = varijabla2.toString();
+                odrediste = varijabla2;
+            }
+
+
+        }
+        function clearGraphics() {
+            
+            var d = document.getElementById("myCanvas");
+            var gcd = d.getContext("2d");
+            gcd.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            checkif2values = [];
+            Memorize_point_X = [];
+            Memorize_point_Y = [];
+            izvorisni_clanovi = [];
+            global_destinationX = [];
+            global_destinationY = [];
+            prva_vrijednost = "";
+            vrijednost_noda = [];
+            x = 30;
+            y = 20;
+            angling = 0;
+            document.getElementById('broj1').innerHTML = "0";
+            document.getElementById('broj2').innerHTML = "0";
+            document.getElementById('broj_cvora').innerHTML = "0";
+            document.getElementById('broj_puteva').innerHTML = "0";
+            document.getElementById('broj_mogucihputeva').innerHTML = "0";
+            varijabla2 = 0;
+            varijalba = 0;
+            odrediste = 0;
+            izvor = 0;
+            checkif2values2 = [];
+            privremena = "";
+            xyz = false;
+            iz_izvorista = false;
+            already_drawn = false;
+            mem_tockeY = [];
+            cvor = 0;
+            putevi = 0;
+            moguci_putevi = 0;
+        }
+        //GLAVNE 3 METODE U KOJIMA MJENJAMO PARAMETRE------------------------------------------------------------------------------------------
+        function crtajMetodaSekvencialna() {
+            prva_vrijednost = izvor.toString();
+            Memorize_point_X.push(x);
+            Memorize_point_Y.push(y);
+
+            if (firstselected) {
+                Sekvencialna_Izvor(tablica1bez_znakova);
+                Sekvencialna(tablica1bez_znakova);
+                adjustOdrediste();
+            }
+            else if (secondselected)// tu staviti else if za trecu tablicu
+            {
+                Sekvencialna_Izvor(tablica2bez_znakova);
+                Sekvencialna(tablica2bez_znakova);
+                adjustOdrediste();
+            }
+            else if (thirdselected)// tu staviti else if za trecu tablicu
+            {
+                Sekvencialna_Izvor(tablica3bez_znakova);
+                Sekvencialna(tablica3bez_znakova);
+                adjustOdrediste();
+            }
+
+            else {
+                Sekvencialna_Izvor(tablica4bez_znakova);
+                Sekvencialna(tablica4bez_znakova);
+                adjustOdrediste();
+            }
+
+        }
+
+        function crtajMetodaIzvor() {
+            prva_vrijednost = izvor.toString();
+            Memorize_point_X.push(x);
+            Memorize_point_Y.push(y);
+            if (firstselected) {
+
+                SekvencialnaIzvorIzvorPrvi(tablica1bez_znakova, tablica1sa_znakovima);
+                SekvencialnaIzvorIzvorDrugi(tablica1bez_znakova, tablica1sa_znakovima);
+                adjustOdrediste();
+            }
+            else if (secondselected)// tu staviti else if za trecu tablicu
+            {
+                SekvencialnaIzvorIzvorPrvi(tablica2bez_znakova, tablica2sa_znakovima);
+                SekvencialnaIzvorIzvorDrugi(tablica2bez_znakova, tablica2sa_znakovima);
+                adjustOdrediste();
+            }
+            else if (thirdselected)// tu staviti else if za trecu tablicu
+            {
+                SekvencialnaIzvorIzvorPrvi(tablica3bez_znakova, tablica3bez_znakova);
+                SekvencialnaIzvorIzvorDrugi(tablica3bez_znakova, tablica3bez_znakova);
+                adjustOdrediste();
+            }
+            else {
+                SekvencialnaIzvorIzvorPrvi(tablica4bez_znakova, tablica4sa_znakovima);
+                SekvencialnaIzvorIzvorDrugi(tablica4bez_znakova, tablica4sa_znakovima);
+                adjustOdrediste();
+            }
+
+        }
+
+        function crtajMetodaUzPrenosenje() {
+            prva_vrijednost = izvor.toString();
+            Memorize_point_X.push(x);
+            Memorize_point_Y.push(y);
+            if (firstselected) {
+                SekvencialnaIzvorUzPrenosenjePrva(tablica1bez_znakova, tablica1sa_znakovima);
+                SekvencialnaIzvorUzPrenosenjeDruga(tablica1bez_znakova, tablica1sa_znakovima);
+                adjustOdrediste();
+            }
+
+            else if (secondselected)// tu staviti else if za trecu tablicu
+            {
+                SekvencialnaIzvorUzPrenosenjePrva(tablica2bez_znakova, tablica2sa_znakovima);
+                SekvencialnaIzvorUzPrenosenjeDruga(tablica2bez_znakova, tablica2sa_znakovima);
+                adjustOdrediste();
+            }
+            else if (thirdselected)// tu staviti else if za trecu tablicu
+            {
+                SekvencialnaIzvorUzPrenosenjePrva(tablica3bez_znakova, tablica3bez_znakova);
+                SekvencialnaIzvorUzPrenosenjeDruga(tablica3bez_znakova, tablica3bez_znakova);
+                adjustOdrediste();
+            }
+            else {
+                SekvencialnaIzvorUzPrenosenjePrva(tablica4bez_znakova, tablica4sa_znakovima);
+                SekvencialnaIzvorUzPrenosenjeDruga(tablica4bez_znakova, tablica4sa_znakovima);
+                adjustOdrediste();
+            }
+
+            //GLAVNE 3 METODE U KOJIMA MJENJAMO PARAMETRE------------------------------------------------------------------------------------------
+
+        }
+
+        function crtaj()  // METODA SVIH METODA METODA SVIH METODA METODA SVIH METODA METODA SVIH METODA METODA SVIH METODA
+        {
+            if (izvor == 0 || odrediste == 0) {
+                alert('Unesite broj izvorišta i odredišta');
+            }
+            else if (izvor == odrediste) {
+                alert('Izvor i odredište ne mogu biti jednaki');
+            }
+            else {
+                if (!already_drawn) {
+                    already_drawn = true;
+                    if (document.getElementById('radio1').checked) {
+                        crtajMetodaSekvencialna();
+                       
+                        document.getElementById("broj_cvora").innerHTML = cvor.toString();
+                        putevi=putevi - 1;
+                        document.getElementById("broj_puteva").innerHTML = putevi.toString();
+                        document.getElementById("broj_mogucihputeva").innerHTML = moguci_putevi.toString();
+
+                    }
+                    else if (document.getElementById('radio2').checked) {
+                        crtajMetodaIzvor();
+                        
+                        document.getElementById("broj_cvora").innerHTML = cvor.toString();
+                        putevi = putevi - 1;
+                        document.getElementById("broj_puteva").innerHTML = putevi.toString();
+                        document.getElementById("broj_mogucihputeva").innerHTML = moguci_putevi.toString();
+                       
+
+                    }
+                    else {
+                        crtajMetodaUzPrenosenje();
+                       
+                        document.getElementById("broj_cvora").innerHTML = cvor.toString();
+                        putevi = putevi - 1;
+                        document.getElementById("broj_puteva").innerHTML = putevi.toString();
+                        document.getElementById("broj_mogucihputeva").innerHTML = moguci_putevi.toString();
+                    }
+                }
+                else { alert('Izbrišite dijagram prije ponovnog crtanja'); }
+            }
+
+        }
+        // FIXNA METODA---------------------------------------------------------------------------------------------------------------------------
+        var store = "";
+        $(document).ready(function () {
+            zoom = 100;
+            $("#colorChoice").change(function () {
+                if (already_drawn) {
+                    alert("Nakon odabrane boje potrebno je ponovo crtati graf!");
+                }
+               
+
+                c = document.getElementById("myCanvas");
+                ctx = c.getContext("2d");
+                ctx.strokeStyle = ($(this).val()).toString();
+             
+                clearGraphics();
+               
+            });
+            //zoom = 100;
+          
+            $("#push_bar").hide();
+
+            
+
+            c = document.getElementById("myCanvas");
+            ctx = c.getContext("2d");
+            ctx.strokeStyle = '#6b6ffe';
+
+            $("ul>li").on("click", function () {
+
+                if ($(this).index() == 0) {
+                  
+                    if (store != null) { $("#here_table").empty(); }
+                    store = makeTableHTML(tablica1sa_znakovima);
+                    $("#here_table").append(store).hide().fadeIn(700);
+                    store = "";
+
+                    firstselected = true;
+                    secondselected = false;
+                    thirdselected = false;
+                    fourthselected = false;
+                    document.getElementById('broj1').innerHTML = "0";
+                    document.getElementById('broj2').innerHTML = "0";
+                    varijabla2 = 0;
+                    varijalba = 0;
+                    odrediste = 0;
+                    izvor = 0;
+                }
+                else if ($(this).index() == 1) {
+                    if (store != null) { $("#here_table").empty(); }
+                    store = makeTableHTML(tablica2sa_znakovima);
+                    $("#here_table").append(store).hide().fadeIn(700);
+                    store = "";
+
+                    secondselected = true;
+                    firstselected = false;
+                    thirdselected = false;
+                    fourthselected = false;
+                    document.getElementById('broj1').innerHTML = "0";
+                    document.getElementById('broj2').innerHTML = "0";
+                    varijabla2 = 0;
+                    varijalba = 0;
+                    odrediste = 0;
+                    izvor = 0;
+                }
+                else if ($(this).index() == 2) {
+                    if (store != null) { $("#here_table").empty(); }
+                    store = makeTableHTML(tablica3bez_znakova);
+                    $("#here_table").append(store).hide().fadeIn(700);
+                    store = "";
+
+                    thirdselected = true;
+                    secondselected = false;
+                    firstselected = false;
+                    fourthselected = false;
+                    document.getElementById('broj1').innerHTML = "0";
+                    document.getElementById('broj2').innerHTML = "0";
+                    varijabla2 = 0;
+                    varijalba = 0;
+                    odrediste = 0;
+                    izvor = 0;
+                }
+                else if ($(this).index() == 3) {
+                    if (store != null) { $("#here_table").empty(); }
+                    store = makeTableHTML(tablica4sa_znakovima);
+                    $("#here_table").append(store).hide().fadeIn(700);
+                    store = "";
+
+                    thirdselected = false;
+                    secondselected = false;
+                    firstselected = false;
+                    fourthselected = true;
+                    document.getElementById('broj1').innerHTML = "0";
+                    document.getElementById('broj2').innerHTML = "0";
+                    varijabla2 = 0;
+                    varijalba = 0;
+                    odrediste = 0;
+                    izvor = 0;
+                }
+                var value = $(this).text();
+                $("#dropp").text(value);
+              
+              
+            });
+          
+
+        });
+        $(window).resize(function () {
+            if ($(window).width() < 740 && already_drawn)
+            {
+                
+              
+            }
+            else if ($(window).width() >= 740) {
+             
+            }
+           
+        });
+        function pushX() {
+            $('#main1').hide('slide', { direction: 'left' }, 1000);
+            $("#opend").css("visibility", "visible").hide().fadeIn(1100);
+            $("#here_table").css("margin-left", "65px");
+
+        }
+        function openDiv() {
+            $('#main1').show('slide', { direction: 'left' }, 1000);
+            $("#opend").css("visibility", "hidden");
+            $("#here_table").css("margin-left", "0px");
+        }
+        function makeTableHTML(myArray) {
+            var counterrr = 0;
+            var counterrrr = 0;
+            var result = "<table border=1>";
+            for (var i = 0; i < myArray.length; i++) {
+                result += "<tr>";
+                for (var j = 0; j < myArray[i].length; j++) {
+
+                    if (j == myArray[i].length - 1 && i == 0) { continue; } // za sredivanje zadnjeg broja
+                    if (j == 0 && i == 0) { result += "<td width='20'>" + "  " + "</td>"; } //  za 0 0 celiju
+                    if (i == 0) { counterrr++; result += "<td width='20'>" + counterrr + "</td>"; } // row 1,2,3...,n
+                    if (j == 0 && i != 0) { counterrrr++; result += "<td width='20'>" + counterrrr + "</td>"; } // col 1,2,3...,n
+                   
+                    else { if (myArray[i][j] != 0) { result += "<td width='40'>" + myArray[i][j] + "</td>"; } }  // za sve ostalo...,n
+                   
+                }
+                result += "</tr>";
+            }
+            result += "</table>";
+
+            return result;
+        }
+        
+       
+        //ESTETIKA
+        function adjustOdrediste() {
+            car = document.getElementById("myCanvas");
+            ytong = car.getContext("2d");
+            var max_x = global_destinationX[0];
+
+            for (var d = 0; d < global_destinationX.length; d++) {
+                if (global_destinationX[d] > max_x) {
+                    max_x = global_destinationX[d];
+                }
+            }
+            for (var d = 0; d < global_destinationX.length; d++) {
+                if (global_destinationX[d] < max_x) {
+                    ytong.clearRect(global_destinationX[d] + 70, global_destinationY[d] - 30, 100, 100);
+                    ytong.beginPath();
+                    ytong.arc(global_destinationX[d] + (max_x - global_destinationX[d]) + 110, global_destinationY[d] + 20, 30, 0, 2 * Math.PI);
+                    ytong.moveTo(global_destinationX[d] + 50, global_destinationY[d] + 13);
+                    ytong.lineTo(global_destinationX[d] + (max_x - global_destinationX[d]) + 80, global_destinationY[d] + 13);
+                    ytong.font = "30px arial";
+                    ytong.fillText(odrediste, global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 22, global_destinationY[d] + 13 + 16);
+                    var img = document.getElementById("numberpi");
+                    ytong.drawImage(img, global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 22 + 45, global_destinationY[d] - 5);
+
+
+                    if (d == 0) {
+                        ytong.font = "20px arial";
+                        ytong.fillText("(" + d + ")" + ". prioritet", global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 122, global_destinationY[d] + 13 + 32);
+                    }
+                    else {
+                        ytong.font = "20px arial";
+                        ytong.fillText("(" + d + ")" + ". alternativni", global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 122, global_destinationY[d] + 13 + 32);
+                    }
+                    ytong.stroke();
+                    moguci_putevi++;
+                }
+                else {
+                    if (d == 0) {
+                        ytong.font = "20px arial";
+                        ytong.drawImage(img, global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 22 + 45, global_destinationY[d] - 5);
+                        ytong.fillText("(" + d + ")" + ". prioritet", global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 122, global_destinationY[d] + 13 + 32);
+                        ytong.stroke();
+                        moguci_putevi++;
+                    }
+                    else {
+                        ytong.font = "20px arial";
+                        ytong.drawImage(img, global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 22 + 45, global_destinationY[d] - 5);
+                        ytong.fillText("(" + d + ")" + ". alternativni", global_destinationX[d] + (max_x - global_destinationX[d]) + 80 + 122, global_destinationY[d] + 13 + 32);
+                    }
+                    ytong.stroke();
+                    moguci_putevi++;
+                }
+            }
+
+        }
+        //ESTETIKA END
+
+        function zoomIn() {
+            zoom += 5;
+            $("#myCanvas").css("width", zoom + "%");
+           
+
+        }
+        function zoomOut() {
+            zoom -= 5;
+            $("#myCanvas").css("width", zoom + "%");
+          
+
+        }
+        function downDiv() {  $("#down").slideToggle(); }
+
+        function englishLang() {
+            $("#first").text("Select a table:");
+            $("#second").text("Select routing strategy:");
+            $("#sekv").text("Sequential");
+            $("#source").text("Source");
+            $("#sourcetrans").text("Source with transfer");
+            $("#izvor").text("Source");
+            $("#odrediste").text("Destination");
+            $("#postavke").text("Settings:");
+            $("#jezik").text("Language:");
+            $("#english").text("English");
+            $("#croatian").text("Croatian");
+            $("#cvorevi").text("Total nodes:");
+            $("#linije").text("Total lines:");
+            $("#moguciputevi").text("Possible paths:");
+            $("#boja").text("Color:");
+            $("#tabel1").text("1.table (8x8)");
+            $("#tabel2").text("2.table (5x5)");
+            $("#tabel3").text("3.table (5x5)");
+            $("#tabel4").text("4.table (9x9)");
+           
+        }
+        function croatianLang() {
+            $("#first").text("Odaberite tablicu:");
+            $("#second").text("Odaberite strategiju usmjeravanja:");
+            $("#sekv").text("Sekvencijalna");
+            $("#source").text("Izvorište");
+            $("#sourcetrans").text("Izvorište uz prenošenje");
+            $("#izvor").text("Izvor");
+            $("#odrediste").text("Odredište");
+            $("#postavke").text("Postavke:");
+            $("#jezik").text("Jezik:");
+            $("#english").text("Engleski");
+            $("#croatian").text("Hrvatski");
+            $("#cvorevi").text("Ukupan broj čvorova:");
+            $("#linije").text("Broj linija:");
+            $("#moguciputevi").text("Broj mogućih puteva:");
+            $("#boja").text("Boja:");
+            $("#tabel1").text("1.tablica (8x8)");
+            $("#tabel2").text("2.tablica (5x5)");
+            $("#tabel3").text("3.tablica (5x5)");
+            $("#tabel4").text("4.tablica (9x9)");
+        }
+       
+    </script>
+</head>
+<body>
+    <div id="main1" class="col-sm-3" style="border:2px solid green;box-shadow: 10px 10px 5px #888888;margin-bottom:20px;">
+        <div id="left">
+            <img  style="text-align:right;" onclick="pushX()" src="delete.png"/>
+            <p id="first"style="text-align:center;margin-top:10px;">Odaberite tablicu:</p>
+
+            <!--dropdownbox-->
+            <div class="dropdown">
+                <button id="dropp" class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#" id="tabel1">1.tablica (8x8)</a></li>
+                    <li><a href="#" id="tabel2">2.tablica (5x5)</a></li>
+                    <li><a href="#" id="tabel3">3.tablica (5x5)</a></li>
+                    <li><a href="#" id="tabel4">4.tablica (9x9)</a></li>
+                </ul>
+            </div>
+            <!--dropdownbox-->
+
+            <p id="second" style="text-align:center;">Odaberite strategiju usmjeravanja:</p>
+            <div class="ca">
+                <input type="radio" name="radio" id="radio1" onclick="" class="radio" checked />
+                <label for="radio1"><p id="sekv" class="inside">Sekvencijalna</p></label>
+            </div>
+
+            <div class="ca">
+                <input type="radio" name="radio" onclick="" id="radio2" class="radio" />
+                <label for="radio2"><p id="source" class="inside">Izvorište</p></label>
+            </div>
+
+            <div class="ca">
+                <input type="radio" name="radio" onclick="" id="radio3" class="radio" />
+                <label for="radio3" style="margin-bottom:30px;"><p id="sourcetrans"class="inside">Izvor uz prenošenje</p></label>
+            </div>
+
+
+            <!--IZVOR-->
+            <div class="hrlinefirst"></div>
+            <p id="izvor"> Izvor</p>
+            <img id="up1" src="up.png" onclick="povecaj()" />
+            <img id="down1" src="down.png" onclick="smanji()" />
+            <p id="broj1"> 0</p>
+            <!--IZVOR-->
+            <!--ODREDISTE-->
+            <p id="odrediste">Odredište</p>
+            <img id="up2" src="up.png" onclick="povecaj2()" />
+            <img id="down2" src="down.png" onclick="smanji2()" />
+            <p id="broj2"> 0</p>
+            <!--ODREDISTE-->
+            <!--BUTTON-->
+            <button type="button" class="btn btn-success green" onclick="crtaj()">Nacrtaj</button>
+            <button type="button" class="btn btn-primary blue" onclick="clearGraphics()"> Izbriši </button>
+            <!--BUTTON-->
+            <div class="hrlinesecond"></div>
+
+            <!--POSTAVKE-->
+            <p id="postavke" style="font-weight:600;margin-bottom:20px" onclick="downDiv()">Postavke:</p>
+            <div id="down">
+           
+            <p id="jezik" style="display:inline;" >Jezik:</p>
+            <p id="english"style="display:inline;margin-left:10px">Engleski</p>
+            <img src="uk.png" class="image"  onclick="englishLang()" style="display:inline;"/>
+            <p id="croatian"  class="image" style="display:inline;">Hrvatski </p><img src="cro.png" onclick="croatianLang()"  style="display:inline;" />
+         
+
+            <p id="cvorevi"style="margin-top:40px">Ukupan broj čvorova:</p><p id="broj_cvora">x</p>  
+            <p id="linije" style="margin-top:20px">Broj linija:</p><p id="broj_puteva">x</p>  
+            <p id="moguciputevi" style="margin-top:20px">Broj mogućih puteva:</p><p id="broj_mogucihputeva">x</p>  
+            <p id="boja" style="margin-top:20px">Boja čvora:</p>
+            <fieldset id="bojac">
+              <input style="width:26px" type="color" id="colorChoice">
+            </fieldset>
+            </div>
+
+            <!--POSTAVKE-->
+
+        </div>
+    </div>
+    <div class="col-sm-9" style="border:2px solid black">
+        <div id="here_table"></div>
+        <div style="position:relative;top:-30px; left:0px;">
+
+        <img id="zoomin1" src="zoomin.png" onclick="zoomIn()" />
+        <img id="zoomout1" src="zoomout.png" onclick="zoomOut()" />
+
+        </div>
+        <canvas id="myCanvas" width="1000" height="1200">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+
+        <img id="numberpi" src="pi.png" width="40" height="45" style="position:absolute; right:350px; top:510px;visibility:hidden;" />
+       
+        <div id="push_bar"></div>
+    </div>
+    <img id="opend" style="position:absolute;left:20px;top:10px; visibility:hidden;" onclick="openDiv()" src="settings.png"/>
+</body>
+</html>
